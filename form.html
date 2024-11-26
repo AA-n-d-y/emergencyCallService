@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Submit Incident</title>
+</head>
+<body>
+    <form method="POST" action="/submit-incident">
+        <div>
+            <label for="name"> Name: </label>
+            <input type="text" id="name" required>
+        </div>
+        
+        <div>
+            <label for="phone-number"> Phone Number: </label>
+            <input type="tel" id="phone-number" required>
+        </div>
+        
+
+        <div>
+            <label for="location"> Location: </label>
+            <input type="text" id="location">
+        </div>
+
+        <div>
+            <label for="Picture"> Picture: </label>
+            <input type="url" id="Picture">
+        </div>
+
+        <div>
+            <label for="comment"> Comment: </label>
+            <textarea id="comment"></textarea>
+        </div>
+        <button> Submit</button>
+    </form>
+    <!-- Name 
+Phone Number
+Location:Address or place name (Optional: Longtitude and latitude)
+Picture Link
+Comment
+
+When SUbmit -> Auto-fill: 1. Time/Date to current and Status -> OPEN -->
+</body>
+</html>
