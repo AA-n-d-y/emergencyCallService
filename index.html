@@ -10,17 +10,30 @@
     crossorigin=""/>
 </head>
 <body>
-    <div id="map">
-    </div>
+    <form>
+        <input type="text" id="address" placeholder="Enter address or select on map">
+        <input type="button" id="submit" value="submit" onclick="addMarker()">
+    </form>
+
+    <div id="map"></div>
 
 
 
 
 
-    <!--Leaflet script-->
+
+
+
+
+    
+
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""></script> 
+    <script src="https://unpkg.com/esri-leaflet@3.0.12/dist/esri-leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet-vector@4.2.5/dist/esri-leaflet-vector.js"></script>
+    <script src="https://unpkg.com/esri-leaflet-geocoder@3.1.4/dist/esri-leaflet-geocoder.js"></script>
     <script src = "app.js"></script>
     <script src = "map.js"></script>
 </body>
