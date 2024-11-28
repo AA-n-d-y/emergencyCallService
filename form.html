@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="form.css">
+    <title>Submit Incident</title>
+    <style>
+        body{
+            align-items: center;
+        }
+        #form-container div{
+            margin-top: 1em;
+        }
+        #form-container input{
+            width: 20em;
+            height: 2em;
+        }
+        #form-container textarea{
+            width: 60%;
+            height: 10em;
+        }
+        #location input{
+            width: 30em;
+            height: 2em;
+        }
+    
+    </style>
+</head>
+
+<body>
+    <h1>Emergency Incident Submission</h1>
+    <p>Please provide accurate and detailed information about the incident to get a timely help and response.
+    </p>
+    <form id="form-container">
+        <div>
+            <label for="name"> Name: </label>
+            <input type="text" id="name" required>
+        </div>
+        
+        <div>
+            <label for="phone-number"> Phone Number: </label>
+            <input type="tel" id="phone-number" required>
+        </div>
+        
+
+        <div id="location">
+            <label> Location: </label><br>
+            <div>
+                <input type="text" id="address" placeholder="Street Address" required>
+            </div>
+            <div id="address-row">
+                <input type="text" id="city" placeholder="City" required>
+                <input type="text" id="region" placeholder="Region" required>
+            </div>
+            
+            <div>
+                <input type="text" id="postal" placeholder="Postal/ ZIP Code" required>
+            </div>
+        </div>
+
+        <div>
+            <label for="Picture"> Picture: </label>
+            <input type="file" id="Picture">
+        </div>
+
+        <div>
+            <label for="comment"> Comment: </label> <br>
+            <textarea id="comment" placeholder="Describe the situtation"></textarea>
+        </div>
+        <button> Submit</button>
+    </form>
+    <!-- Name 
+Phone Number
+Location:Address or place name (Optional: Longtitude and latitude)
+Picture Link
+Comment
+
+When Submit -> Auto-fill: 1. Time/Date to current and Status -> OPEN -->
+</body>
+</html>
