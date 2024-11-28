@@ -2,10 +2,14 @@
 <html>
 <head>
     <meta charset="UTF-8" />
+    <link rel="stylesheet" href="form.css">
     <title>Submit Incident</title>
 </head>
 <body>
-    <form method="POST" action="/submit-incident">
+    <h1>Emergency Incident Submission</h1>
+    <p>Please provide accurate and detailed information about the incident to get a timely help and response.
+    </p>
+    <form id="form-container">
         <div>
             <label for="name"> Name: </label>
             <input type="text" id="name" required>
@@ -18,17 +22,23 @@
         
 
         <div>
-            <label for="location"> Location: </label>
-            <input type="text" id="location">
+            <label> Location: </label><br>
+            <input type="text" id="address1" placeholder="Street Address" required>
+            <div>
+                <input type="text" id="city" placeholder="City" required>
+                <input type="text" id="region" placeholder="Region" required>
+            </div>
+            
+            <input type="text" id="address" placeholder="Postal/ ZIP Code" required>
         </div>
 
         <div>
             <label for="Picture"> Picture: </label>
-            <input type="url" id="Picture">
+            <input type="file" id="Picture">
         </div>
 
         <div>
-            <label for="comment"> Comment: </label>
+            <label for="comment"> Comment: </label> <br>
             <textarea id="comment"></textarea>
         </div>
         <button> Submit</button>
@@ -39,6 +49,6 @@ Location:Address or place name (Optional: Longtitude and latitude)
 Picture Link
 Comment
 
-When SUbmit -> Auto-fill: 1. Time/Date to current and Status -> OPEN -->
+When Submit -> Auto-fill: 1. Time/Date to current and Status -> OPEN -->
 </body>
 </html>
