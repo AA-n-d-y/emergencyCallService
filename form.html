@@ -4,28 +4,29 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="form.css">
     <title>Submit Incident</title>
+    <style>
+        body{
+            align-items: center;
+        }
+        #form-container div{
+            margin-top: 1em;
+        }
+        #form-container input{
+            width: 20em;
+            height: 2em;
+        }
+        #form-container textarea{
+            width: 60%;
+            height: 10em;
+        }
+        #location input{
+            width: 30em;
+            height: 2em;
+        }
+    
+    </style>
 </head>
-<style>
-    body{
-        align-items: center;
-    }
-    #form-container div{
-        margin-top: 1em;
-    }
-    #form-container input{
-        width: 20em;
-        height: 2em;
-    }
-    #form-container textarea{
-        width: 60%;
-        height: 10em;
-    }
-    #location input{
-        width: 30em;
-        height: 2em;
-    }
 
-</style>
 <body>
     <h1>Emergency Incident Submission</h1>
     <p>Please provide accurate and detailed information about the incident to get a timely help and response.
@@ -42,7 +43,7 @@
         </div>
         
 
-        <div id="location"">
+        <div id="location">
             <label> Location: </label><br>
             <div>
                 <input type="text" id="address" placeholder="Street Address" required>
@@ -53,7 +54,7 @@
             </div>
             
             <div>
-                <input type="text" id="address" placeholder="Postal/ ZIP Code" required>
+                <input type="text" id="postal" placeholder="Postal/ ZIP Code" required>
             </div>
         </div>
 
