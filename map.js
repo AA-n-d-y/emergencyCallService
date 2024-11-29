@@ -18,6 +18,18 @@ var coordinates = 0;
 var addressStr = "";
 var addressBox = document.querySelector("#address");
 
+// There was some error, it was not letting the form to submit, related to map, added just a temporary 
+// solution to test table, keep if you want or remove it
+map.on('styleimagemissing', function (e) {
+  console.warn(`Missing image: ${e.id}`);
+  map.addImage(e.id, {
+    width: 1,
+    height: 1,
+    data: new Uint8Array(4) // Transparent pixel
+  });
+});
+
+
 map.on("click", function (e) {
 
   L.esri.Geocoding
@@ -51,20 +63,27 @@ map.on("click", function (e) {
 // Add marker onto map after submitting form
 function addMarker(event) {
   // Prevent the default form submission behavior
-  event.preventDefault();
-
+    event.preventDefault();
   // Create a temporary URL for the file
 
 
-  // Collect data from the form
-  const name = document.getElementById("name").value;
-  const phoneNumber = document.getElementById("phone-number").value;
-  const location = addressStr || document.getElementById("address").value;
-  const city = document.getElementById("city").value;
-  const region = document.getElementById("region").value;
-  const postal = document.getElementById("postal").value;
-  const picture = document.getElementById("Picture").value; // Optional
-  const comment = document.getElementById("comment").value;
+    // Collect data from the form
+    const name = document.getElementById("name").value;
+    const phoneNumber = document.getElementById("phone-number").value;
+    const location = addressStr || document.getElementById("address").value;
+    const city = document.getElementById("city").value;
+    const region = document.getElementById("region").value;
+    const postal = document.getElementById("postal").value;
+    const picture = document.getElementById("Picture").files[0]; // changed this a little for file.
+    const comment = document.getElementById("comment").value;
+
+
+    // change a little for picture file handling.
+  let pictureURL = "N/A";
+  if (picture){
+    pictureURL = URL.createObjectURL (picture);
+  }
+
 
   // Create an object to represent the report
   const report = {
@@ -77,7 +96,7 @@ function addMarker(event) {
       postal: postal,
       coordinates: coordinates,
     },
-    picture: picture,
+    picture: pictureURL,
     comment: comment,
     dateTime: new Date().toISOString(), // Current timestamp
     status: "OPEN",
@@ -130,3 +149,76 @@ function updateReportStatus(index) {
 function CLEARING() {
   localStorage.clear();
 }
+
+
+
+
+
+
+
+// Adding a new function to get the values to populate data.
+function populateTable() {
+    const reports = JSON.parse (localStorage.getItem("reports")) || [];
+    const tbody = document.querySelector("#table tbody");
+
+    tbody.innerHTML = "";
+
+    reports.forEach((report, index) => {
+        const row = document.createElement("tr");
+
+
+        let locString;
+
+        if(report.location.address) {
+            locString = report.location.address;
+        }
+        else{
+            locString = `${report.location.address || ""}, ${report.location.city || "" }, ${report.location.region || "" }, ${report.location.postal || "" } `;
+        }
+
+        const statusCell = document.createElement("td");
+        const statusIcon = document.createElement("span");
+        const statusButton = document.createElement("button");
+
+        if (report.status === "OPEN") {
+          statusIcon.textContent = "✔️ OPEN";
+          statusIcon.style.color = "green";
+        }
+        else{
+          statusIcon.textContent = "❌ RESOLVED";
+          statusIcon.style.color = "red";
+        }
+
+        statusButton.textContent = "Change Status";
+        statusButton.style.marginLeft = "10px";
+        statusButton.onclick = () => {
+          report.status = report.status === "OPEN" ? "RESOLVED" : "OPEN";
+
+          reports[index] = report;
+          localStorage.setItem("reports", JSON.stringify(reports));
+
+          populateTable();
+        };
+
+
+        statusCell.appendChild(statusIcon);
+        statusCell.appendChild(statusButton);
+
+        row.innerHTML = `
+        <td>${locString}</td>
+        <td>${new Date(report.dateTime).toLocaleString()}</td>
+        <td>${report.comment}</td>
+        `;
+
+        row.appendChild(statusCell);
+
+        tbody.appendChild(row);
+    });
+}
+
+
+document.addEventListener("DOMContentLoaded", populateTable());
+
+document.getElementById("form-container").addEventListener("submit", () => {
+    setTimeout(populateTable, 100);
+});
