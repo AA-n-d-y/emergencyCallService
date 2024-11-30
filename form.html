@@ -1,51 +1,86 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@3.1.4/dist/esri-leaflet-geocoder.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Submit Incident</title>
 </head>
 
+<header>
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container-fluid fw-bolder">
+            <a class="navbar-brand" href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24" width="27"
+                    viewBox="0 0 576 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                    <path fill="#ffffff"
+                        d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l32 0L96 32 64 32zm64 0l0 448 320 0 0-448L128 32zM512 480c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64l-32 0 0 448 32 0zM256 176c0-8.8 7.2-16 16-16l32 0c8.8 0 16 7.2 16 16l0 48 48 0c8.8 0 16 7.2 16 16l0 32c0 8.8-7.2 16-16 16l-48 0 0 48c0 8.8-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16l0-48-48 0c-8.8 0-16-7.2-16-16l0-32c0-8.8 7.2-16 16-16l48 0 0-48z" />
+                </svg>
+                Emergency Services
+            </a>
+        </div>
+    </nav>
+</header>
+
 <body>
-    <h1>Emergency Incident Submission</h1>
-    <p>Please provide accurate and detailed information about the incident to get a timely help and response.
+
+    <h5>Emergency Incident Submission</h5>
+    <p class="fw-semibold">Please provide accurate and detailed information about the incident to get a timely help and
+        response.
     </p>
     <form id="form-container">
-        <div>
-            <label for="name"> Name: </label>
-            <input type="text" id="name" required>
-        </div>
+        <div class="form-section">
+            <div class="input-group mb-3">
+                <span class="  input-group-text" id="inputGroup-sizing-default" for="name">
+                    Name:</span>
+                <input type="text" class="form-control" placeholder="First Name + Last Name"
+                    aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" id="name" required>
+            </div>
 
-        <div>
-            <label for="phone-number"> Phone Number: </label>
-            <input type="tel" id="phone-number" required>
-        </div>
+            <div class="input-group mb-3">
+                <span class="  input-group-text" id="inputGroup-sizing-default" for="phone-number">
+                    Phone
+                    Number:</span>
+                <input type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-default" placeholder="+xx xxx-xxx-xxxx" id="phone-number"
+                    required>
+            </div>
 
-        <div>
-            <label for="emergency-type"> Emergency Type: </label>
-            <input type="text" id="emergency-type" required>
+            <div class="input-group mb-3">
+                <span class=" input-group-text" id="inputGroup-sizing-default" for="emergency-type">
+                    Emergency
+                    Type:</span>
+                <input type="text" class="form-control" aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-default" placeholder="E.g., Fire, Medical" id="emergency-type"
+                    required>
+            </div>
+
+
+            <div class="mb-3 ">
+                <label for="Picture" class="form-label">Picture:</label>
+                <input class="form-control" type="file" id="Picture">
+            </div>
+
+            <div class="form-floating">
+                <textarea class="form-control h-25" style="width:30em;" id="comment"
+                    placeholder="Describe the situtation" id="floatingTextarea2"></textarea>
+                <label for="floatingTextarea2 ">Comments</label>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Submit</button>
         </div>
 
         <div id="location">
-            <label> Location (Search below or select on map): </label><br>
+            <label class="text-primary fw-bold"> Location (Search below or select on map): </label><br>
             <div id="map"></div>
         </div>
-
-        <div>
-            <label for="Picture"> Picture: </label>
-            <input type="file" id="Picture">
-        </div>
-
-        <div>
-            <label for="comment"> Comment: </label> <br>
-            <textarea id="comment" placeholder="Describe the situtation"></textarea>
-        </div>
-        <button type="submit"> Submit</button>
-        <!-- removed the onclick function, instead added the eventlistener in map.js -->
     </form>
+
 
     <!-- for testing purposes use the button below to clear data -->
     <button type="button" onclick="CLEARING()">CLEAR</button>
@@ -59,17 +94,17 @@ Comment
 When Submit -> Auto-fill: 1. Time/Date to current and Status -> OPEN -->
 
 
-<h2>ALL REPORTED INCIDENTS</h2>
-<table id="table" border="1">
-    <thead>
-        <th>Location</th>
-        <th>Date/Time</th>
-        <th>Comment</th>
-        <th>Status</th>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
+    <h2>ALL REPORTED INCIDENTS</h2>
+    <table id="table" "1">
+        <thead>
+            <th>Location</th>
+            <th>Date/Time</th>
+            <th>Comment</th>
+            <th>Status</th>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"

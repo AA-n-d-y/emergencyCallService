@@ -2,6 +2,16 @@ body {
     align-items: center;
 }
 
+form{
+    padding: 0.5em;
+}
+
+table {
+    margin: 0%;
+    padding-bottom: 0%;
+}
+
+
 #form-container div {
     margin-top: 1em;
 }
@@ -26,10 +36,10 @@ body {
     height: 30em;
 }
 
-h2{
+h5 {
     color: red;
     text-align: center;
-    text-decoration:underline ;
+    text-decoration: underline;
 }
 
 #table {
@@ -38,7 +48,8 @@ h2{
     margin-top: 20px;
 }
 
-#table th, #table td {
+#table th,
+#table td {
     padding: 10px;
     text-align: left;
     border: 1px solid #ddd;
@@ -58,6 +69,10 @@ button {
     font-size: 0.9em;
 }
 
+nav {
+    margin-bottom: 1em;
+}
+
 button:hover {
     background-color: #0056b3;
 }
@@ -65,5 +80,38 @@ button:hover {
 @media screen and (max-width: 768px) {
     table {
         font-size: 0.9em;
+    }
+}
+
+/* Default layout - form and map side by side */
+#form-container {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 20px;
+}
+
+.form-section {
+    flex: 1;
+}
+
+.map-section {
+    flex: 1;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    #form-container {
+        flex-direction: column;
+        /* Stack the form and map vertically */
+    }
+
+    .form-section,
+    .map-section {
+        width: 100%;
+    }
+
+    #map {
+        height: 300px;
+        /* Adjust map size if needed */
     }
 }
