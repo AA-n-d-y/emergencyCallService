@@ -108,7 +108,9 @@ function addMarker(event) {
   localStorage.setItem("reports", JSON.stringify(reports));
 
   var marker = L.marker(coordinates).addTo(map);
-  marker.bindPopup(`<strong>${location}</strong><p>Type: </p>`);
+  marker.bindPopup(`<strong>${report.location.address}</strong>
+                    <p>${report.comment}</p>
+                    <p>Status: ${report.status}</p>`);
 
   // Reset the form
   document.getElementById("form-container").reset();
@@ -156,25 +158,38 @@ function CLEARING() {
 
 
 
-// Adding a new function to get the values to populate data.
+// Adding a new function to get the values to populate data. EDITED TO ONLY SHOW REPORTS CURRENTLY IN MAP VIEW
 function populateTable() {
     const reports = JSON.parse (localStorage.getItem("reports")) || [];
     const tbody = document.querySelector("#table tbody");
 
     tbody.innerHTML = "";
 
+    const bounds = map.getBounds();
+
     reports.forEach((report, index) => {
         const row = document.createElement("tr");
 
+        if (report.location.coordinates) {
+          const latlng = L.latLng(
+              report.location.coordinates.lat,
+              report.location.coordinates.lng
+          );
 
-        let locString;
+          // Check if the report's location is within the current map bounds
+          if (!bounds.contains(latlng)) {
+              // Skip reports outside the current map view
+              return;
+          }
+      } else {
+          // Skip reports without coordinates
+          return;
+      }
 
-        if(report.location.address) {
-            locString = report.location.address;
-        }
-        else{
-            locString = `${report.location.address || ""}, ${report.location.city || "" }, ${report.location.region || "" }, ${report.location.postal || "" } `;
-        }
+      // Construct the location string
+      let locString = report.location.address
+          ? report.location.address
+          : `${report.location.city || ""}, ${report.location.region || ""}, ${report.location.postal || ""}`;
 
         const statusCell = document.createElement("td");
         const statusIcon = document.createElement("span");
@@ -216,6 +231,7 @@ function populateTable() {
     });
 }
 
+map.on('moveend', populateTable); // Updates table when map zooms or pans
 
 document.addEventListener("DOMContentLoaded", populateTable());
 
