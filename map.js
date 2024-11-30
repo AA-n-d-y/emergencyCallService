@@ -5,14 +5,30 @@ const map = L.map("map", {
   minZoom: 2
 })
 
-map.setView([49.276292, -122.92], 13); // Paris
+map.setView([49.276292, -122.92], 13); // SFU
 
 L.esri.Vector.vectorBasemapLayer(basemapEnum, {
   token: accessToken
 }).addTo(map);
 
+const searchControl = L.esri.Geocoding.geosearch({
+  position: "topright",
+  placeholder: "Enter an address or place e.g. 1 York St",
+  useMapBounds: false,
+  
+  providers: [
+    L.esri.Geocoding.arcgisOnlineProvider({
+      apikey: accessToken,
+      nearby: {
+        lat: 49.276292,
+        lng: -122.92
+      }
+    })
+  ]
 
-// Set incident location by clicking on map
+}).addTo(map);
+
+
 const layerGroup = L.layerGroup().addTo(map);
 var coordinates = 0;
 var addressStr = "";
@@ -29,7 +45,26 @@ map.on('styleimagemissing', function (e) {
   });
 });
 
+// Set incident location by searching
+searchControl.on("results", (data) => {
+  // Clear existing markers
+  layerGroup.clearLayers();
 
+  // Loop through the search results
+  data.results.forEach((result) => {
+    const marker = L.marker(result.latlng);
+    layerGroup.addLayer(marker);
+    
+    const lngLatString = `${Math.round(result.latlng.lng * 100000) / 100000}, ${Math.round(result.latlng.lat * 100000) / 100000}`;
+    marker.bindPopup(`<strong>${lngLatString}</strong><p>${result.text}</p>`).openPopup();
+
+    coordinates = result.latlng;
+    addressStr = result.text;
+    addressBox.value = result.text;
+  });
+});
+
+// Set incident location by clicking on map
 map.on("click", function (e) {
 
   L.esri.Geocoding
@@ -70,10 +105,9 @@ function addMarker(event) {
     // Collect data from the form
     const name = document.getElementById("name").value;
     const phoneNumber = document.getElementById("phone-number").value;
-    const location = addressStr || document.getElementById("address").value;
-    const city = document.getElementById("city").value;
-    const region = document.getElementById("region").value;
-    const postal = document.getElementById("postal").value;
+    const emergencyType = document.getElementById("emergency-type").value;
+    const location = addressStr;
+
     const picture = document.getElementById("Picture").files[0]; // changed this a little for file.
     const comment = document.getElementById("comment").value;
 
@@ -89,11 +123,9 @@ function addMarker(event) {
   const report = {
     name: name,
     phoneNumber: phoneNumber,
+    emergencyType: emergencyType,
     location: {
       address: location,
-      city: city,
-      region: region,
-      postal: postal,
       coordinates: coordinates,
     },
     picture: pictureURL,
@@ -187,9 +219,7 @@ function populateTable() {
       }
 
       // Construct the location string
-      let locString = report.location.address
-          ? report.location.address
-          : `${report.location.city || ""}, ${report.location.region || ""}, ${report.location.postal || ""}`;
+      let locString = report.location.address;
 
         const statusCell = document.createElement("td");
         const statusIcon = document.createElement("span");
@@ -206,13 +236,17 @@ function populateTable() {
 
         statusButton.textContent = "Change Status";
         statusButton.style.marginLeft = "10px";
-        statusButton.onclick = () => {
-          report.status = report.status === "OPEN" ? "RESOLVED" : "OPEN";
+        statusButton.onclick = async () => {
+        const isVerified = await promptAndVerifyPassword(); // Verify password before changing status
+          if (isVerified){
+            report.status = report.status === "OPEN" ? "RESOLVED" : "OPEN";
 
-          reports[index] = report;
-          localStorage.setItem("reports", JSON.stringify(reports));
-
-          populateTable();
+            reports[index] = report;
+            localStorage.setItem("reports", JSON.stringify(reports));
+  
+            populateTable();
+          }
+          
         };
 
 
