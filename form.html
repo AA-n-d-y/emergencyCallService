@@ -94,13 +94,16 @@ Comment
 When Submit -> Auto-fill: 1. Time/Date to current and Status -> OPEN -->
 
 
-    <h2>ALL REPORTED INCIDENTS</h2>
-    <table id="table" "1">
+    <h5>ALL REPORTED INCIDENTS</h5>
+    <table id="table">
         <thead>
+            <th>Emergency Type</th>
             <th>Location</th>
-            <th>Date/Time</th>
+            <th>Date/Time <button id="sort" onclick="Sort()">Sort (old to new)</button></th>
             <th>Comment</th>
             <th>Status</th>
+            <th></th>
+
         </thead>
         <tbody>
         </tbody>

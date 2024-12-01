@@ -249,26 +249,74 @@ function populateTable() {
           
         };
 
+        
+        const deleteCell = document.createElement("td");
+        const del = document.createElement("button");
+        del.textContent = "Delete";
+        del.style.backgroundColor = "red";
+        deleteCell.appendChild(del);
+        // Delete the report
+        del.onclick = async() => {
+        const ver = await promptAndVerifyPassword(); // Verify password before changing status
+          if(ver) {
+            reports.splice(index, 1);
+            localStorage.setItem("reports", JSON.stringify(reports));
+            populateTable();
+          }
+        };
 
+        deleteCell.appendChild(del);
         statusCell.appendChild(statusIcon);
         statusCell.appendChild(statusButton);
 
         row.innerHTML = `
+        <td>${report.emergencyType}</td>
         <td>${locString}</td>
         <td>${new Date(report.dateTime).toLocaleString()}</td>
         <td>${report.comment}</td>
         `;
 
         row.appendChild(statusCell);
+        row.appendChild(deleteCell);
 
-        tbody.appendChild(row);
+        if (document.getElementById("sort").textContent.includes("old to new")){
+          tbody.insertAdjacentElement("afterbegin", row);
+        }
+        else{
+          tbody.appendChild(row);
+        }
     });
-}
+};
+
+
 
 map.on('moveend', populateTable); // Updates table when map zooms or pans
-
 document.addEventListener("DOMContentLoaded", populateTable());
-
 document.getElementById("form-container").addEventListener("submit", () => {
     setTimeout(populateTable, 100);
 });
+
+
+
+
+
+// sort the table
+function Sort() {
+  const table = document.getElementById("table");
+  const tbody = document.querySelector("tbody");
+  const rows = Array.from(tbody.querySelectorAll("tr"));
+
+  const sortButton = document.getElementById("sort");
+  const ascending = sortButton.textContent.includes("old to new");
+
+  // sorting
+  rows.sort((a, b) => {
+    const dA = new Date (a.cells[2].textContent.trim());
+    const dB = new Date (b.cells[2].textContent.trim());
+    return ascending ? dA - dB : dB - dA;
+  });
+
+  rows.forEach(row => tbody.appendChild(row));
+
+  sortButton.textContent = ascending ? "Sort (new to old)" : "Sort (old to new)";
+};

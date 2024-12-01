@@ -48,15 +48,20 @@ h5 {
     margin-top: 20px;
 }
 
+tr:nth-last-of-type(even){
+    background-color: #f3f3f3;
+}
+
 #table th,
 #table td {
     padding: 10px;
     text-align: left;
-    border: 1px solid #ddd;
+    border: 1px solid #dad9d9;
 }
 
 #table th {
-    background-color: #f4f4f4;
+    background-color: #dad9d993;
+    text-align: center;
 }
 
 button {
@@ -67,6 +72,16 @@ button {
     background-color: #007BFF;
     color: white;
     font-size: 0.9em;
+}
+
+#sort{
+    background-color: #dad9d993;
+    color: grey;
+    font-weight: lighter;
+    text-decoration: underline;
+}
+#sort:hover{
+    background-color: #ddd;
 }
 
 nav {
