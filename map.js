@@ -141,7 +141,7 @@ function addMarker(event) {
 
   var marker = L.marker(coordinates).addTo(map);
   marker.bindPopup(`<strong>${report.location.address}</strong>
-                    <p>${report.comment}</p>
+                    <p>Type: ${report.emergencyType}</p>
                     <p>Status: ${report.status}</p>`);
 
   // Reset the form
@@ -162,7 +162,7 @@ function loadReports() {
     }
     const marker = L.marker(report.location.coordinates).addTo(map);
     marker.bindPopup(`<strong>${report.location.address}</strong>
-                        <p>${report.comment}</p>
+                        <p>Type: ${report.emergencyType}</p>
                         <p>Status: ${report.status}</p>`);
   });
 }
