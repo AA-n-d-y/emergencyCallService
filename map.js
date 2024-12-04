@@ -269,6 +269,22 @@ function populateTable() {
         statusCell.appendChild(statusIcon);
         statusCell.appendChild(statusButton);
 
+        //Add "More Detail"
+        const detailCell = document.createElement("td");
+        const detailLink = document.createElement("a");
+        detailLink.textContent = "MORE DETAIL";
+        detailLink.style.cursor = "pointer";
+        detailLink.style.color = "grey";
+        detailLink.style.textDecoration = "underline";
+
+        //Clicked -> Display the report card
+        detailLink.onclick = () => {
+          displayReportCard(report);
+        };
+
+
+        detailCell.appendChild(detailLink);//Add to cell
+
         row.innerHTML = `
         <td>${report.emergencyType}</td>
         <td>${locString}</td>
@@ -276,8 +292,10 @@ function populateTable() {
         <td>${report.comment}</td>
         `;
 
+        //Add cells to rows
         row.appendChild(statusCell);
         row.appendChild(deleteCell);
+        row.appendChild(detailCell);
 
         if (document.getElementById("sort").textContent.includes("old to new")){
           tbody.insertAdjacentElement("afterbegin", row);
@@ -287,6 +305,23 @@ function populateTable() {
         }
     });
 };
+
+function displayReportCard(report){
+  console.log(report.picture);
+  var reportDetail = `<div style="width: 300px; height: 150px; overflow-y:auto;">
+    <img src="${report.picture}" alt="report image" style="width: 150px; height: 150px; object-fit: cover;">
+    <p><strong>Type: </strong>${report.emergencyType}</p>
+    <p><strong>Location: </strong>${report.location.address}</p>
+    <p><strong>Reported by: </strong>${report.name} (${report.phoneNumber})</p>
+    <p><strong>Time: </strong>${new Date(report.dateTime).toLocaleString()}</p>
+    <p><strong>Status: </strong>${report.status}</p>
+    <p><strong>Comments: </strong>${report.comment}</p>
+  </div>`;
+  
+  const marker = L.marker(report.location.coordinates, {pane: 'popupPane'}).addTo(layerGroup);
+  marker.bindPopup(reportDetail).openPopup();
+
+}
 
 
 

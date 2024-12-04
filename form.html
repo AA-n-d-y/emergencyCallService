@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@3.1.4/dist/esri-leaflet-geocoder.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <title>Submit Incident</title>
+    <title>Emergency Services</title>
 </head>
 
 <header>
@@ -85,14 +85,6 @@
     <!-- for testing purposes use the button below to clear data -->
     <button type="button" onclick="CLEARING()">CLEAR</button>
 
-    <!-- Name 
-Phone Number
-Location:Address or place name (Optional: Longtitude and latitude)
-Picture Link
-Comment
-
-When Submit -> Auto-fill: 1. Time/Date to current and Status -> OPEN -->
-
 
     <h5>ALL REPORTED INCIDENTS</h5>
     <table id="table">
@@ -102,8 +94,8 @@ When Submit -> Auto-fill: 1. Time/Date to current and Status -> OPEN -->
             <th>Date/Time <button id="sort" onclick="Sort()">Sort (old to new)</button></th>
             <th>Comment</th>
             <th>Status</th>
-            <th></th>
-
+            <th></th>  <!-- Cell for Delete -->
+            <th></th> <!-- Cell for More Detail -->
         </thead>
         <tbody>
         </tbody>
