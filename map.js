@@ -107,6 +107,7 @@ function addMarker(event) {
     return; // Stop form submission
   }
 
+  layerGroup.clearLayers();
 
     // Collect data from the form
     const name = document.getElementById("name").value;
@@ -117,75 +118,66 @@ function addMarker(event) {
     const comment = document.getElementById("comment").value;
 
 
-  
-  let pictureURL = "N/A";//As default: User does not submit picture
-
-  
+    // change a little for picture file handling.
+  let pictureURL = "N/A";
   if (picture){
-    //If picture exist -> Read image to save into localStorage
+    pictureURL = URL.createObjectURL (picture);
+  }
+
+
+  // Create an object to represent the report
+  const report = {
+    id: Date.now().toString(), // Unique id for each marker
+    name: name,
+    phoneNumber: phoneNumber,
+    emergencyType: emergencyType,
+    location: {
+      address: location,
+      coordinates: coordinates,
+    },
+    picture: pictureURL,
+    comment: comment,
+    dateTime: new Date().toISOString(), // Current timestamp
+    status: "OPEN",
+  };
+
+
+  if (picture) {
     const reader = new FileReader();
-
-    reader.addEventListener("load", () => {
-      pictureURL = reader.result;
-
-      // Create an object to represent the report
-      const report = {
-        id: Date.now().toString(), // Unique id for each marker
-        name: name,
-        phoneNumber: phoneNumber,
-        emergencyType: emergencyType,
-        location: {
-          address: location,
-          coordinates: coordinates,
-        },
-        picture: pictureURL,
-        comment: comment,
-        dateTime: new Date().toISOString(), // Current timestamp
-        status: "OPEN",
-      };
-
-      // Save to localStorage
-      const reports = JSON.parse(localStorage.getItem("reports")) || [];
-      reports.push(report);
-      localStorage.setItem("reports", JSON.stringify(reports));
-    });
-    reader.readAsDataURL(picture);
-  }
-  else {
-    // Create an object to represent the report (Without no picture)
-    const report = {
-      id: Date.now().toString(), // Unique id for each marker
-      name: name,
-      phoneNumber: phoneNumber,
-      emergencyType: emergencyType,
-      location: {
-        address: location,
-        coordinates: coordinates,
-      },
-      picture: pictureURL,
-      comment: comment,
-      dateTime: new Date().toISOString(), // Current timestamp
-      status: "OPEN",
+    reader.onload = function (e) {
+      report.picture = e.target.result; // Base64 encoded string
+      saveReportAndUpdateMap(report);
     };
-
-    // Save to localStorage
-    const reports = JSON.parse(localStorage.getItem("reports")) || [];
-    reports.push(report);
-    localStorage.setItem("reports", JSON.stringify(reports));
+    reader.readAsDataURL(picture);
+  } 
+  else {
+    report.picture = null; // No image provided
+    saveReportAndUpdateMap(report);
   }
+}
+document.getElementById("form-container").addEventListener("submit", addMarker);
 
+function saveReportAndUpdateMap(report) {
+  // Save to localStorage
+  const reports = JSON.parse(localStorage.getItem("reports")) || [];
+  reports.push(report);
+  localStorage.setItem("reports", JSON.stringify(reports));
 
   // Create marker
-  var marker = L.marker(coordinates).addTo(map);
+  const marker = L.marker(report.location.coordinates).addTo(map);
   marker.bindPopup(getMarkerPopupContent(report));
   markers[report.id] = marker; // Store marker
 
   // Reset the form
   document.getElementById("form-container").reset();
+  coordinates = null;
+  addressStr = "";
+
   alert("Incident submitted and saved successfully!");
 }
 
-document.getElementById("form-container").addEventListener("submit", addMarker);
+
+
 
 
 function loadReports() {
@@ -228,10 +220,16 @@ function CLEARING() {
 
 
 function getMarkerPopupContent(report) {
+  let imageContent = '';
+  if (report.picture) {
+    imageContent = `<img src="${report.picture}" alt="report image" style="width: 150px; height: 150px; object-fit: cover;">`;
+  } 
+  else {
+    imageContent = `<p>No image provided.</p>`;
+  }
+
   return `<div style="width: 300px; height: 150px; overflow-y:auto;">
-  ${report.picture != "N/A" ?
-    `<img src="${report.picture}" alt="report image" style="width: 250px; height: 250px; object-fit: cover;">` : ''
-    } 
+    <img src="${report.picture}" alt="report image" style="width: 150px; height: 150px; object-fit: cover;">
     <p><strong>Type: </strong>${report.emergencyType}</p>
     <p><strong>Location: </strong>${report.location.address}</p>
     <p><strong>Reported by: </strong>${report.name} (${report.phoneNumber})</p>
@@ -331,7 +329,7 @@ function populateTable() {
         statusCell.appendChild(statusIcon);
         statusCell.appendChild(statusButton);
 
-        //Add "More Detail" cell
+        //Add "More Detail"
         const detailCell = document.createElement("td");
         const detailLink = document.createElement("a");
         detailLink.textContent = "MORE DETAIL";
@@ -339,13 +337,13 @@ function populateTable() {
         detailLink.style.color = "grey";
         detailLink.style.textDecoration = "underline";
 
-        //When user click "More Detail" -> Open Report Card
+        //Clicked -> Display the report card
         detailLink.onclick = () => {
           displayReportCard(report);
         };
 
 
-        detailCell.appendChild(detailLink);//Text to Cell
+        detailCell.appendChild(detailLink);//Add to cell
 
         row.innerHTML = `
         <td>${report.emergencyType}</td>
@@ -369,10 +367,9 @@ function populateTable() {
 };
 
 function displayReportCard(report){
+  console.log(report.picture);
   var reportDetail = `<div style="width: 300px; height: 150px; overflow-y:auto;">
-  ${report.picture != "N/A" ?
-    `<img src="${report.picture}" alt="report image" style="width: 250px; height: 250px; object-fit: cover;">` : ''
-  } 
+    <img src="${report.picture}" alt="report image" style="width: 150px; height: 150px; object-fit: cover;">
     <p><strong>Type: </strong>${report.emergencyType}</p>
     <p><strong>Location: </strong>${report.location.address}</p>
     <p><strong>Reported by: </strong>${report.name} (${report.phoneNumber})</p>
@@ -381,7 +378,6 @@ function displayReportCard(report){
     <p><strong>Comments: </strong>${report.comment}</p>
   </div>`;
   
-  //Display the pop up card on above marker on the map 
   const marker = L.marker(report.location.coordinates, {pane: 'popupPane'}).addTo(layerGroup);
   marker.bindPopup(reportDetail).openPopup();
 
