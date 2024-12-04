@@ -220,16 +220,8 @@ function CLEARING() {
 
 
 function getMarkerPopupContent(report) {
-  let imageContent = '';
-  if (report.picture) {
-    imageContent = `<img src="${report.picture}" alt="report image" style="width: 150px; height: 150px; object-fit: cover;">`;
-  } 
-  else {
-    imageContent = `<p>No image provided.</p>`;
-  }
-
   return `<div style="width: 300px; height: 150px; overflow-y:auto;">
-    <img src="${report.picture}" alt="report image" style="width: 150px; height: 150px; object-fit: cover;">
+  ${report.picture != null? `<img src="${report.picture}" alt="report image" style="width: 150px; height: 150px; object-fit: cover;">` : ''}
     <p><strong>Type: </strong>${report.emergencyType}</p>
     <p><strong>Location: </strong>${report.location.address}</p>
     <p><strong>Reported by: </strong>${report.name} (${report.phoneNumber})</p>
@@ -367,9 +359,8 @@ function populateTable() {
 };
 
 function displayReportCard(report){
-  console.log(report.picture);
   var reportDetail = `<div style="width: 300px; height: 150px; overflow-y:auto;">
-    <img src="${report.picture}" alt="report image" style="width: 150px; height: 150px; object-fit: cover;">
+  ${report.picture != null? `<img src="${report.picture}" alt="report image" style="width: 150px; height: 150px; object-fit: cover;">` : ''}
     <p><strong>Type: </strong>${report.emergencyType}</p>
     <p><strong>Location: </strong>${report.location.address}</p>
     <p><strong>Reported by: </strong>${report.name} (${report.phoneNumber})</p>
