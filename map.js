@@ -95,11 +95,17 @@ map.on("click", function (e) {
     });
 });
 
+const markers = {}; // Marker storage
+
 // Add marker onto map after submitting form
 function addMarker(event) {
   // Prevent the default form submission behavior
     event.preventDefault();
   // Create a temporary URL for the file
+  if (!coordinates || !addressStr) {
+    alert("Please select a location on the map or use the search bar to set the location.");
+    return; // Stop form submission
+  }
 
 
     // Collect data from the form
@@ -107,7 +113,6 @@ function addMarker(event) {
     const phoneNumber = document.getElementById("phone-number").value;
     const emergencyType = document.getElementById("emergency-type").value;
     const location = addressStr;
-
     const picture = document.getElementById("Picture").files[0]; // changed this a little for file.
     const comment = document.getElementById("comment").value;
 
@@ -121,6 +126,7 @@ function addMarker(event) {
 
   // Create an object to represent the report
   const report = {
+    id: Date.now().toString(), // Unique id for each marker
     name: name,
     phoneNumber: phoneNumber,
     emergencyType: emergencyType,
@@ -139,10 +145,10 @@ function addMarker(event) {
   reports.push(report);
   localStorage.setItem("reports", JSON.stringify(reports));
 
+  // Create marker
   var marker = L.marker(coordinates).addTo(map);
-  marker.bindPopup(`<strong>${report.location.address}</strong>
-                    <p>Type: ${report.emergencyType}</p>
-                    <p>Status: ${report.status}</p>`);
+  marker.bindPopup(getMarkerPopupContent(report));
+  markers[report.id] = marker; // Store marker
 
   // Reset the form
   document.getElementById("form-container").reset();
@@ -155,15 +161,21 @@ document.getElementById("form-container").addEventListener("submit", addMarker);
 function loadReports() {
   const reports = JSON.parse(localStorage.getItem("reports")) || [];
 
+  // Clear existing markers from the map
+  for (let id in markers) {
+    map.removeLayer(markers[id]);
+    delete markers[id];
+  }
+  
+
   reports.forEach((report) => {
     if (!report || !report.location || !report.location.coordinates) {
       console.warn("Invalid report data:", report);
       return;
     }
     const marker = L.marker(report.location.coordinates).addTo(map);
-    marker.bindPopup(`<strong>${report.location.address}</strong>
-                        <p>Type: ${report.emergencyType}</p>
-                        <p>Status: ${report.status}</p>`);
+    marker.bindPopup(getMarkerPopupContent(report));
+    markers[report.id] = marker;
   });
 }
 // Call this function when the page loads
@@ -185,8 +197,17 @@ function CLEARING() {
 }
 
 
-
-
+function getMarkerPopupContent(report) {
+  return `<div style="width: 300px; height: 150px; overflow-y:auto;">
+    <img src="${report.picture}" alt="report image" style="width: 150px; height: 150px; object-fit: cover;">
+    <p><strong>Type: </strong>${report.emergencyType}</p>
+    <p><strong>Location: </strong>${report.location.address}</p>
+    <p><strong>Reported by: </strong>${report.name} (${report.phoneNumber})</p>
+    <p><strong>Time: </strong>${new Date(report.dateTime).toLocaleString()}</p>
+    <p><strong>Status: </strong>${report.status}</p>
+    <p><strong>Comments: </strong>${report.comment}</p>
+  </div>`;
+}
 
 
 
@@ -243,7 +264,9 @@ function populateTable() {
 
             reports[index] = report;
             localStorage.setItem("reports", JSON.stringify(reports));
-  
+            if (markers[report.id]) {
+              markers[report.id].setPopupContent(getMarkerPopupContent(report));
+            }
             populateTable();
           }
           
@@ -259,6 +282,13 @@ function populateTable() {
         del.onclick = async() => {
         const ver = await promptAndVerifyPassword(); // Verify password before changing status
           if(ver) {
+            const reportId = reports[index].id;
+
+    // Remove marker from map
+            if (markers[reportId]) {
+              map.removeLayer(markers[reportId]);
+              delete markers[reportId];
+            }
             reports.splice(index, 1);
             localStorage.setItem("reports", JSON.stringify(reports));
             populateTable();
